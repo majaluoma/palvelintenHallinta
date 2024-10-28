@@ -1,0 +1,9 @@
+services:
+  slave:
+    build:
+      context: .
+      dockerfile: ./slave.Dockerfile
+  master:
+    build:
+      context: .
+      dockerfile: ./master.Dockerfile
