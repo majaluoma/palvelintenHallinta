@@ -57,7 +57,7 @@ Tero Karvinen (2024) on kirjoittanut ohjeet virtuaalikoneen asentamiseen ja seur
 >This kernel requires x86-64 but only detected an i686 CPU
 
 Tämä korjaantui muokkaamalla asetuksista enable I/O APIC ja sallimalla virtuaalikoneelle 2 prosessoria.
-![alt text](image-1.png)
+![alt text](images/image-1.png)
 
 Lopuksi asensin vielä distron päivitykset ja palomuurin kun salt-minionin asentaminen ei onnistunut ensimmäisellä yrittämällä.
 
@@ -77,11 +77,11 @@ Salt-minion -paketin asentamisessa tapahtui virhe ja pakettia ei löytynyt. Asen
 
     $ sudo apt-get -y install salt-minion
     $ sudo salt-call --version
-![alt text](image.png)
+![alt text](images/image.png)
 
 10.22 Kokeilin seuraavaksi asentaa paketin tiedot tehtävänannon (2024b) mukaisesti, mutta tässäkin tuli ongelma vastaan, sillä repo.saltproject-io -hostia ei löytynyt:
 
-![alt text](image-2.png)
+![alt text](images/image-2.png)
 
 10.26 Lopulta paketin asennus onnistui uusilla osoitteilla Saltprojektin ohjeiden mukaan. (Saltproject 2024)
 
@@ -94,7 +94,7 @@ Salt-minion -paketin asentamisessa tapahtui virhe ja pakettia ei löytynyt. Asen
 
 10.30 Muokkasin salt-minion asetuksia niin, että masteriksi asetettiin lokaali tietokone  `master: local`. Tämä muokkaus kuitenkin tuotti ongelman:
 
-![alt text](image-3.png)
+![alt text](images/image-3.png)
 Koska olin tiedostoa tallentaessa vahingossa onnistunut syöttämään ensimmäiselle riville pilkun. Tämä korjaantui poistamalla pilkku tiedostosta.
 
 ## c) Salt-komentojen käyttäminen paikallisesti
@@ -103,7 +103,7 @@ Koska olin tiedostoa tallentaessa vahingossa onnistunut syöttämään ensimmäi
 
     $ sudo salt-call --local -l info state.single file.managed /tmp/moro
 
-![alt text](image-4.png)¨
+![alt text](images/image-4.png)¨
     
 Tarkistin tilafunktion onnistumisen vielä komennolla 
         
@@ -113,7 +113,7 @@ Tarkistin tilafunktion onnistumisen vielä komennolla
     
     $ sudo salt-call --local -l info state.single pkg.installed tree
 
-![alt text](image-5.png)
+![alt text](images/image-5.png)
 
 10.43 Seuraavaksi vuorossa oli service -tilafunktio, jolla ohjelmia käynnistetään ja suljetaan. Esimerkissä hallinnoin palomuuriohjelmaa
     
@@ -121,7 +121,7 @@ Tarkistin tilafunktion onnistumisen vielä komennolla
     $ sudo salt-call --local -l info service.running ufw enable=True
 
 
-![alt text](image-6.png)
+![alt text](images/image-6.png)
 
 10.45 salt-callilla voi myös hallita käyttäjiä tietokoneilla. Alla olebvassa esimerkissä luodaan vierailija -niminen käyttäjä, jos sellaista ei ole.
 
@@ -130,11 +130,11 @@ Tarkistin tilafunktion onnistumisen vielä komennolla
 10.47 Tilafunktiolla cmd.run voidaan ajaa komentoja kohdelaitteessa. Tämä funktio ei kuitenkaan ole oletuksellisesti idempotenssi, ja ilman ehtoja se ajetaan aina kohdekoneella.
 
     $ sudo salt-call --local -l info state.single cmd.run 'touch /tmp/foo' creates="/tmp/foo"
-![alt text](image-7.png)
+![alt text](images/image-7.png)
 
 ## d) Idempotenssi
-![alt text](image-9.png)
-![alt text](image-10.png)
+![alt text](images/image-9.png)
+![alt text](images/image-10.png)
 ## e) Herra-orja arkkitehtuuri paikallisella koneella
 10.50  Kokeillaan asentaa salt-master koneelle ja hyväksyä sillä avaimet minionista
     $ sudo apt-get install salt-master
@@ -148,7 +148,7 @@ Siitä tuli error The key glob '*' does not match any unaccepted keys. Minkä lu
 
     hostname -I 
 
-![alt text](image-8.png)
+![alt text](images/image-8.png)
 
 11.12 Tämäkään ei toiminut. Selvittelin ongelmaa komennoilla 
     $ sudo salt-key -L
