@@ -85,7 +85,7 @@ Salt-minion -paketin asentamisessa tapahtui virhe ja pakettia ei löytynyt. Asen
 
 10.26 Lopulta paketin asennus onnistui uusilla osoitteilla Saltprojektin ohjeiden mukaan. (Saltproject 2024)
 
-    $ mkdir -p /etc/apt/keyrings
+    $ sudo mkdir -p /etc/apt/keyrings
     $ sudo curl -fsSL https://packages.broadcom.com/artifactory/api/security/keypair/SaltProjectKey/public | sudo tee /etc/apt/keyrings/salt-archive-keyring.pgp
     $ sudo curl -fsSL https://github.com/saltstack/salt-install-guide/releases/latest/download/salt.sources | sudo tee /etc/apt/sources.list.d/salt.sources
     $ sudo apt-get update
