@@ -108,9 +108,9 @@ Kolmas tyyppi ovat sanakirjastot **Dictionaries**, jotka sisältävät toisia pe
 ## b) Linux virtuaalikoneen tekeminen Vagrantilla
 
 8.08 Loin projektikansion ja siihen tiedoston **Vagrantfile**. Tiedoston sisällöksi kopioin aikaisemmin raportissa esitetyn vagrantkonfiguroinnin.  
-![alt text](image-1.png)  
+![alt text](images/h2/image-1.png)  
 8.17 Kokeilin käynnistää ensin virtuaalikoneet väärällä komennolla (suoraan syöttämällä `vagrant ssh t001`) ja sain ilmoituksen:  
-![alt text](image-2.png)   
+![alt text](images/h2/image-2.png)   
 Vagrantin konfiguroinnissa olevat virtuaalikoneet siis pitää aina käynnistää yhdessä komennolla `vagrant up`. Koska ensin piti kokeilla yhden virtuaalikoneen käynnistämistä, halusin ensin poistaa Vagrantfile tiedostosta nämä rivit:  
 
         config.vm.define "t002", primary: true do |t002|
@@ -124,7 +124,7 @@ Tämän jälkeen käynnistin yhden virtuaalikoneen, avasin komentpokehotteen ja 
         $ vagrant ssh t001
         $t001 exit
 
-![alt text](image-3.png)  
+![alt text](images/h2/image-3.png)  
 
 
 ## c) Linux virtuaalikoneiden liittäminen samaan verkkoon
@@ -143,12 +143,12 @@ Tämän jälkeen käynnistin yhden virtuaalikoneen, avasin komentpokehotteen ja 
         $ vagrant ssh t02
         $t002  ping 192.168.88.101
 
-![alt text](image-4.png) ![alt text](image-5.png)
+![alt text](images/h2/image-4.png) ![alt text](images/h2/image-5.png)
 
 ## d) Herra-orja-arkkitehtyyrin perustaminen virtuaalikoneille
 Avasin myös toisen komentokehotteen, jotta ei tarvitsisi toistella komentoja vagrant `ssh` ja `exit`  
 8.32 Opin että `vagrant` komentoja pitää virtuaalikoneiden luomisenkin jälkeen ajaa nimenomaa projektikansiossa. Oletoin että virtuaalikoneet olisivat myös muualta saatavissa, sillä Dockerissa esimerkiksi on näin. Kokeilin ensin ajaa `vagrant ssh` -komentoa eri kansiossa:
-![alt text](image-6.png)  
+![alt text](images/h2/image-6.png)  
 
 8.34 Käynnistin molemmat virtuaalikoneet eri terminaaleilla:  
 
@@ -161,7 +161,7 @@ Ensimmäisellä kerralla kun aloin lataamaan Saltstackin paketteja kokeilin tehd
          $t001  sudo apt-get -y install salt-master
          
 Törmäsin kuitenkin taas ongelmaan pakettien puuttumisesta, joka oli ollut haaste myös h1 -tehtävässä aikaisemmin.   
-![alt text](image-7.png)  
+![alt text](images/h2/image-7.png)  
 
 8.39 Kun yritin tehdä komentoja paketin ja niiden avaimien asentamiseksi huomasin että `curl` -paketit puuttuvat virtuaalikoneilta. Asensin ne ja muutkin päivitykset molempiin koneisiin komennoilla:
 
@@ -189,7 +189,7 @@ Asensin saltin master-koneelle lopulta seuraavasti:
         t002 sudo apt-get -y install salt-minion
 
 Lopuksi testasin että asennukset onnistuivat `salt-call --version` -komennolla:   
-![alt text](image-8.png)  ![alt text](image-9.png)  
+![alt text](images/h2/image-8.png)  ![alt text](images/h2/image-9.png)  
 
 8.53 Konfiguroin minion koneen ottamaan käskyjä masterilta:
 
@@ -198,11 +198,11 @@ Lopuksi testasin että asennukset onnistuivat `salt-call --version` -komennolla:
         $t002 sudo systemctl restart salt-minion.service
 
 8.55 Hyväksyin avaimen hostilla, mikä epäonnistui, joten käynnistin masterin uudestaan. Uudelleenkäynnistämisen jälkeen avaimien hyväksyminen toimi.  
-![alt text](image-10.png)
+![alt text](images/h2/image-10.png)
 
         $t001 sudo systemctl restart salt-master.service
 
-![alt text](image-11.png)
+![alt text](images/h2/image-11.png)
 
 8.57. Palasin tehtävään x) ja opiskelin yaml -syntaksia ennen seuraavan tehtävän aloittamista. 
 
@@ -211,7 +211,7 @@ Lopuksi testasin että asennukset onnistuivat `salt-call --version` -komennolla:
 
 9.12 Yritin luoda aluksi .sls tiedostoa minionille `mkdir /srv/salt/testState` -komennolla, mutta huomasin että kansio pitää erikseen luoda toisin kuin /etc/salt/ -kansio:
 
-![alt text](image-12.png)  
+![alt text](images/h2/image-12.png)  
 
        $t002 sudo mkdir /srv/salt
        $t002 sudo mkdir /srv/salt/testState
@@ -225,7 +225,7 @@ Lopuksi testasin että asennukset onnistuivat `salt-call --version` -komennolla:
               file.managed
         $t002 sudo salt --local state.apply testState
 
-![alt text](image-13.png)  
+![alt text](images/h2/image-13.png)  
 
 8.10 Olin valinnut väärän komennon, minkä takia edellinen epäonnistui. `Salt-stack`, `salt` ja `salt-call`, menevätkin nyt helposti sekaisin, enkä ymmärrä täysin näiden kolmen käsitteen sisältöjä. Ilmeisimmin `salt` on salt-masterin komento ja `salt-call`, sitten jotain muuta? ehkä minionin komento? Yritin aluksi ladata salt -komennon minion koneelle, mikä ei oikeastaan auttanut tehtävässä. Vasta viimeinen komento tällä rivillä on oikea ratkaisu:
 
@@ -233,8 +233,8 @@ Lopuksi testasin että asennukset onnistuivat `salt-call --version` -komennolla:
         $t002 sudo salt --local state.apply testState
         $t002 sudo salt-call --local state.apply testState
 
-![alt text](image-14.png)  
-![alt text](image-16.png)  
+![alt text](images/h2/image-14.png)  
+![alt text](images/h2/image-16.png)  
 
 ## f) Sls-tiedostojen hyödyntäminen verkossa
 
@@ -288,7 +288,7 @@ Lopuksi testasin että asennukset onnistuivat `salt-call --version` -komennolla:
 
         $t001 sudo salt '*' state.apply testState
 
-![alt text](image-17.png)
+![alt text](images/h2/image-17.png)
 
 
 ## g) Sls-tiedoston laajentaminen ja idempotenssin testaaminen
@@ -305,19 +305,19 @@ Lopuksi testasin että asennukset onnistuivat `salt-call --version` -komennolla:
     $t001 sudo salt '*' state.apply testMany
 
 8.29 Olin kirjoittanut suhteellisen polun, joka piti nyt muuttaa absoluuttiseksi.
-![alt text](image-18.png)  
+![alt text](images/h2/image-18.png)  
 
         $t001 sudoedit /srv/salt/testMany/init.sls
             /home/user/index.html:
         $t001 sudo salt '*' state.apply testMany
-![alt text](image-19.png) 
+![alt text](images/h2/image-19.png) 
 
 8.32 Jotain häikkää tilassa edelleen olin ja tarkistinkin seuraavaksi loiko `user.present` kansion käyttäjälle.
 
         $t002 cd /home
         $t002 ls
 
-![alt text](image-21.png)  
+![alt text](images/h2/image-21.png)  
 
 Nähtävästi olin luonut käyttäjän **testUser** ja yrittänyt muokata kansiota **/user**, joten korjasin vielä nämä ja ajoin tilan uudestaan. Samalla kun ajoin tilaa uudestaan korjatessani virheitä tuli samalla osoitettua tilan idempotenssi. Eli käyttäjää ei luotu uudelleen, sillä se oli jo minionilla. 
 
@@ -326,7 +326,7 @@ Nähtävästi olin luonut käyttäjän **testUser** ja yrittänyt muokata kansio
         $t001 sudo salt '*' state.apply testMany
         $t002 ls -a -l
 
-![alt text](image-20.png)  
+![alt text](images/h2/image-20.png)  
 
 Huomasi edellistä kohtaa tarkistaessani, että tiedoston omistajuus oli nyt **root** käyttäjällä, mikä ei ollut tarkoitukseni. Kysyin ensin ChatGPT:ltä apua siihen, mitä tilafunktiota tämän tilanteen korjaamiseksi kannattaisi käyttää. Lähdikin sen viitoittamana tutustumaan syvemmin file.managed -tilafunktioon saltin dokumentaation pohjalta (Saltproject 2024b). Muokkasin ohjeiden pohjalta tilan konfiguraatiota:
 
@@ -339,7 +339,7 @@ Huomasi edellistä kohtaa tarkistaessani, että tiedoston omistajuus oli nyt **r
 
         $t002 ls -a -l
 
-![alt text](image-22.png)  
+![alt text](images/h2/image-22.png)  
 
 
 ## h) Useiden tilojen hyödyntäminen
@@ -354,7 +354,7 @@ Huomasi edellistä kohtaa tarkistaessani, että tiedoston omistajuus oli nyt **r
           cmd.run
     $t001 sudo salt '*' state.apply
 
-![alt text](image-23.png)  
+![alt text](images/h2/image-23.png)  
 9.46 muutin vielä tiedostonimen top.sls ja sen sisällön seuraavaksi:
 
         base:
@@ -364,7 +364,7 @@ Huomasi edellistä kohtaa tarkistaessani, että tiedoston omistajuus oli nyt **r
 
 Ja ajoin tilat: $t001 sudo salt '*' state.apply
 
-![alt text](image-24.png)  
+![alt text](images/h2/image-24.png)  
 Lopuksi pysäytin virtuaalikoneet.
 
     $t001 exit
