@@ -104,7 +104,7 @@ Kolmas tyyppi ovat sanakirjastot **Dictionaries**, jotka sisältävät toisia pe
 ## a) Vagrantin asennus Windowsille
 10.11.2024 8.00 Latasin Vagrantin Installer Windowsille ja asensin sen. Käytin AMD64 installeria ja oletusasetuksia.  
 8.07 Vagrantin version tarkistin `vagrant` komennolla.  
-![alt text](image.png) 
+![alt text](images/h2/image.png) 
 ## b) Linux virtuaalikoneen tekeminen Vagrantilla
 
 8.08 Loin projektikansion ja siihen tiedoston **Vagrantfile**. Tiedoston sisällöksi kopioin aikaisemmin raportissa esitetyn vagrantkonfiguroinnin.  
@@ -374,6 +374,10 @@ Lopuksi pysäytin virtuaalikoneet.
 ## h) Apachen asentaminen ja konfigurointi
 Tämä vasta viikolla 47 kun oppitunti on ollut
 
+## Muuta
+
+Kun masteri on asennettu pitää tehä tää:
+$t001 sudo systemctl restart salt-master.service
 
 ## Lähteet
 Karvinen, Tero 2006. Raportin kirjoittaminen – Salt Stack Master and Slave on Ubuntu Linux. Lähde: [https://terokarvinen.com/2006/06/04/raportin-kirjoittaminen-4/](https://terokarvinen.com/2006/06/04/raportin-kirjoittaminen-4/) (Luettu 28.10.2024)  
