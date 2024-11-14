@@ -193,7 +193,7 @@ Lopuksi testasin että asennukset onnistuivat `salt-call --version` -komennolla:
 
 8.53 Konfiguroin minion koneen ottamaan käskyjä masterilta:
 
-        $t002 sudoedit etc/salt/minion 
+        $t002 sudoedit /etc/salt/minion 
             master: 192.168.88.101
         $t002 sudo systemctl restart salt-minion.service
 
