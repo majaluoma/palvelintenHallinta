@@ -322,7 +322,7 @@ Lopuksi testasin että asennukset onnistuivat `salt-call --version` -komennolla:
 Nähtävästi olin luonut käyttäjän **testUser** ja yrittänyt muokata kansiota **/user**, joten korjasin vielä nämä ja ajoin tilan uudestaan. Samalla kun ajoin tilaa uudestaan korjatessani virheitä tuli samalla osoitettua tilan idempotenssi. Eli käyttäjää ei luotu uudelleen, sillä se oli jo minionilla. 
 
         $t001 sudoedit /srv/salt/testMany/init.sls
-            home/testUser/index.html:
+            /home/testUser/index.html:
         $t001 sudo salt '*' state.apply testMany
         $t002 ls -a -l
 
