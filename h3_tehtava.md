@@ -297,8 +297,8 @@ Muokkasin init.sls -tiedostoa seuraavasti:
 ![alt text](images/h3/image-25.png)  
 
 ## c) Rakenna oma Demonia hyödyntävä moduuli
-Jätin tämän tehtävän viimeiseksi.
-
+Jätin tämän tehtävän viimeiseksi. Ehdin yhden lähteen katsoa aiheeseen liittyen. Nyt pitää kuitenkin tehdä muita hommia.
+https://stackoverflow.com/questions/38956127/usb-device-is-not-visible-inside-vagrant
 ## d) Konfiguroi VirtualHost
 20.11.2024 06.03 Tässä kohtaa minionilla oli niin sshd kuin apache. Päätin tuhota virtuaalikoneet ja pistää ne uudestaan käyntiin. Tällä kertaa muokkasin vagrant -tiedostoa niin, että se automaattisesti konfiguroi saltin minionille ja masterille. Lisäsin nämä rivit koodiin ja toistin asennuskomennot. Käytin myös virtuualikoneiden sisällä komentoa `vm.provision` (Hashicorp 2024):
 
