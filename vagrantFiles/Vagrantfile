@@ -1,0 +1,53 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+
+# Copyright 2019-2021 Tero Karvinen http://TeroKarvinen.com
+$tscript = <<TSCRIPT
+set -o verbose
+apt-get update
+apt-get -y install tree
+apt-get -y install curl
+sudo mkdir -p /etc/apt/keyrings
+sudo curl -fsSL https://packages.broadcom.com/artifactory/api/security/keypair/SaltProjectKey/public | sudo tee /etc/apt/keyrings/salt-archive-keyring.pgp
+sudo curl -fsSL https://github.com/saltstack/salt-install-guide/releases/latest/download/salt.sources | sudo tee /etc/apt/sources.list.d/salt.sources
+sudo apt-get update
+echo "Done - set up test environment - https://terokarvinen.com/search/?q=vagrant"
+TSCRIPT
+
+# Author: Olli
+$minion = <<TSCRIPT
+sudo apt-get update
+sudo apt-get install -y salt-minion
+echo "master: 192.168.56.88" | sudo tee /etc/salt/minion
+sudo systemctl restart salt-minion
+echo "Done - set up minion environment"
+TSCRIPT
+
+# Author: Olli
+$master = <<TSCRIPT
+sudo apt-get update
+sudo apt-get install -y salt-master
+sudo systemctl restart salt-master
+echo "Done - set up minion environment"
+TSCRIPT
+
+Vagrant.configure("2") do |config|
+    config.vm.synced_folder ".", "/vagrant", disabled: true
+    config.vm.synced_folder "shared/", "/home/vagrant/shared", create: true
+    config.vm.provision "shell", inline: $tscript
+    config.vm.box = "debian/bullseye64"
+
+    config.vm.define "master" do |master|
+        master.vm.hostname = "master"
+        master.vm.network "private_network", ip: "192.168.56.88"
+        master.vm.provision "shell", inline: $master
+    end
+    
+    config.vm.define "minion1", primary: true do |minion1|
+        minion1.vm.hostname = "minion1"
+        minion1.vm.network "private_network", ip: "192.168.56.89"
+        minion1.vm.provision "shell", inline: $minion
+    end
+  
+end
