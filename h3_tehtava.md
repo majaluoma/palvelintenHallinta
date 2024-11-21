@@ -101,11 +101,12 @@ Testaamisessa voi käyttää avuksi netcattia demonien olemassaolon tarkistamise
 19.11.2024 18.32 Aloitin tehtävien tekemisen. Ennen tätä olin joutunut vähän säätämään vagrantin ja VirtualBoxin kanssa, sillä olin asentanut koneen uudestaan ja kaikki ohjelmatkin samalla.
 
 Asennetaan nyt Apache koneelle, ensin paikallisesti, sitten infrakoodina.
-Alkutilanne:
+Alkutilanne:  
 ![alt text](images/h3/image-4.png)
 ![alt text](images/h3/image-5.png)
 
-18.41 Asennetaan apache -paketti minionille
+18.41 Asennetaan apache -paketti minionille  
+
                 $minion sudo apt update
                 $minion sudo apt install apache2
                 $minion sudo systemctl enable apache
@@ -279,7 +280,7 @@ Lopuksi vielä poistin nämä muutokset minionilta
                 ClientAliveInterval 120
                 UseDNS no
 
-En muistanut mikä oli line ending kun laadin grep -komentoa, mutta apu löytyi StackOverflowsta kiitos Ray'n (2024) kommentin niin katoin Ray:n kommenttia. Avusta huolimatta sain virheen taasliittyen polkuihin:
+En muistanut mikä oli line ending kun laadin grep -komentoa, mutta apu löytyi StackOverflowsta kiitos Ray'n (2024). Avusta huolimatta sain virheen taasliittyen polkuihin:
 
 ![alt text](images/h3/image-23.png)
 
