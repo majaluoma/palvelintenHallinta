@@ -1,5 +1,5 @@
 Tein vahingossa ensimmäisen osan tehtävän jo edellisellä viikolla. Alla tuotos.
-
+Test text from vagrant machine trough git
 ## Rakenna oma Demonia hyödyntävä moduuli
 Jätin tämän tehtävän viimeiseksi. Piti tehdä jotain ääniin liittyvää, mutten ehtinyt ottamaan enempää selvää laitteiden kytkemisestä vagra virtuaalikoneisiin. Tutkiskelin siitä jotain tekstejä ja kokeilin usb -laitteiden liittämistä, mutta projekti näytti aika haastavalta. Yritän siis tehdää OpenTTD -peliserverin minion koneelle moduulilla.
 
