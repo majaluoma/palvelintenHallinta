@@ -44,7 +44,7 @@ TSCRIPT
 
 ```
 
-![alt text](/images/image-11.png)
+![alt text](./images/image-11.png)
 
 Loin openttd -moduulin saltille master -koneella ja latasin tarvittavat Openttd -tiedostot.
 
@@ -70,8 +70,8 @@ $vagrant@master openttd --help
 $vagrant@master openttd -Df
 
 ```
-![alt text](/images/image.png)  
-![alt text](/images/image-2.png)  
+![alt text](./images/image.png)  
+![alt text](./images/image-2.png)  
 
 Katsotaan seuraavkasi mistä voisi löytyä konfiguraatiotiedosto `openttd.cfg`. Käytin komentoja `ls -a`, `find -name 'openttd'` ja lopulta luin openttd sivuilta, että asetustiedosto on kotihakemistossa `~/.config`. Sieltä ei kuitenkaan vielä löytynyt tiedostoa, vaikka kansio oli kyllä olemassa. Ajoin kotihakemistossa `sudo find -name 'openttd.cfg'` Eikö mitään löytynyt. No, käynnistin serverin uudestaan komennolla, jossa otin huomioon portin ja halusin pitää konsolin auki.  
 ```sh
@@ -79,18 +79,18 @@ $vagrant@master openttd -D localhost:3001:
 ```
 Ja sain viestin:  
 
-![alt text](/images/image-3.png)
+![alt text](./images/image-3.png)
 
 Openttdtä ei ilmeisesti kannattaisi ajaa roottina. Ehkä ohjelma pitäisi asentaa käyttäjälle? ( Planetmaker https://www.tt-forums.net/viewtopic.php?t=70615)
 
 Purin ohjelman kotihakemistoon ja ajoin sieltä ja nyt valitti taas grafiikkasetistä. Jotain kuitenkin tapahtui ja yritin komennoilla `ps` ja `top` selvittää oliko ohjelma päällä, mielestäni ei (Ayodeji 2024).
 
-![alt text](/images/image-4.png)
-![alt text](/images/image-5.png)
+![alt text](./images/image-4.png)
+![alt text](./images/image-5.png)
 
 Luin openttd --help komentoa vähän tarkemmin ja olin ainakin laittanut komentoja väärään järjestykseen. Kokeilin seuraavaksi `openttd -f -D localhost:3001`
 
-![alt text](/images/image-6.png)
+![alt text](./images/image-6.png)
 
 `ps -x` Ei kuitenkaan näyttänyt vieläkään mitään. Menin kotihakemistoon ja `find -name '*log*'` löysin logitiedoston ja tsekkasin sitä. Noo sama grafiikkaongelma. Menin lukemaan openttd manuaaleja. ajattelin että ohjelma pitäisi onnistua käynnistämään ilman graafista liittymää.
 
@@ -110,24 +110,24 @@ $vagrant@master sudo tar -xf opengfx-7.1.tar -C /tmp
 
 Sitten menin lukemaan tuon grafiikkasetin manuaaleja. Taria ei olisi tarvinnut purkaa. `sudo rm -r -f  opengfx-7.1/`  
 
-![alt text](/images/image-7.png)
+![alt text](./images/image-7.png)
 
 No, laitoin tämän nyt sitten kansioon (koitan nyt ensiksi /opt/ -kansiota) ja sain seuraavan errorin:  
 
-![alt text](/images/image-8.png)
+![alt text](./images/image-8.png)
 
 Ja kielikansiossa on kyl kamaa...  
 
-![alt text](/images/image-9.png)
+![alt text](./images/image-9.png)
 
 Ongelma oli siinä, että käytin komentoa ympäristömuuttujan kautta. Kun käynniskin komennon suoraan kansiosta `./openttd` homma lähti toimimaan. Himmeä mäihä että tajuisin tuon.
 
-![alt text](/images/image-12.png)
-![alt text](/images/image-13.png)
+![alt text](./images/image-12.png)
+![alt text](./images/image-13.png)
 
 Hypoteesini oli, että kun peli  startattu, myös asetustiedosto löytyisi ja tämä piti paikkansa. `sudo find -name 'openttd.cfg'` Kopioin koko asetustiedoston tiedoston saltin moduuliin `sudo cp openttd.cfg /srv/salt/openttd/`
 
-![alt text](/images/image-15.png)
+![alt text](./images/image-15.png)
 
 Ennen kuin muutan muita asetuksia, niin yritän saada tämän toimimaan minionilla. Porttikonfiguroinnin teen vasta kun tämä kaikki toimii. 
 
