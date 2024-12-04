@@ -1,28 +1,16 @@
-/tmp/openttd-14.1-linux-generic-amd64.tar.xz:
-  file.managed:
-    - source: salt://openttd/openttd-14.1-linux-generic-amd64.tar.xz
-tar -xJf /tmp/openttd-14.1-linux-generic-amd64.tar.xz -C /opt:
-  cmd.run:
-    - creates: /opt/openttd-14.1-linux-generic-amd64
-/usr/local/bin/openttd:
-  file.symlink:
-    - target: /tmp/openttd-14.1-linux-generic-amd64/openttd
-    - force: True
-libgomp1:
-  pkg.installed
-openttd -Df localhost:3001:
-  cmd.run
-
-
   graiikkojen checksum:
   928fcf34efd0719a3560cbab6821d71ce686b6315e8825360fba87a7a94d7846
 
+  peli:
+  c7648c9aac11daeb7f1bdd7a07346865ae590c07af4a6d02a5ed01fb33eba067
+
 ## OpenTTD -infra koodina
-Projektin tarkoituksena oli tuottaa koodi, joka rakentaa openTTD -pelipalvelimen kohdekoneelle käyttäen hyödyksi Saltstackia. Käyn tässä raportissa läpi kaikki tarvittavat vaiheet. Halusin myös konfiguroida pelin siten, että se toimisi koko viikonlopun pituisena marathon -pelinä, jota voisi pelata muiden lanien pelien yhteydessä.
+Projektin tarkoituksena oli tuottaa koodi, joka rakentaa openTTD -pelipalvelimen kohdekoneelle käyttäen hyödyksi Saltstackia. Käyn tässä raportissa läpi kaikki tarvittavat vaiheet. Halusin myös konfiguroida pelin siten, että se toimisi koko viikonlopun pituisena marathon -pelinä, jota voisi pelata muiden lanin pelien yhteydessä.
 
 7:45 Aloitin tehtävän tekemisen.
 
-Loin kaksi vagrant -virtuaalikonetta **master** ja **minion1** seuraavilla alkuskripteillä:
+Loin kaksi vagrant -virtuaalikonetta **master** ja **minion1** seuraavilla alkuskripteillä:  
+
 ```sh
 # Copyright 2019-2021 Tero Karvinen http://TeroKarvinen.com
 $tscript = <<TSCRIPT
@@ -55,6 +43,7 @@ echo "Done - set up minion environment"
 TSCRIPT
 
 ```
+
 ![alt text](/images/image-11.png)
 
 Loin openttd -moduulin saltille master -koneella ja latasin tarvittavat Openttd -tiedostot.
@@ -84,16 +73,18 @@ $vagrant@master openttd -Df
 ![alt text](/images/image.png)  
 ![alt text](/images/image-2.png)  
 
-Katsotaan seuraavkasi mistä voisi löytyä konfiguraatiotiedosto `openttd.cfg`. Käytin komentoja `ls -a`, `find -name 'openttd'` ja lopulta luin openttd sivuilta, että asetustiedosto on kotihakemistossa `~/.config`. Sieltä ei kuitenkaan vielä löytynyt tiedostoa, vaikka kansio oli kyllä olemassa. Ajoin kotihakemistossa `sudo find -name 'openttd.cfg'` Eikö mitään löytynyt. No, käynnistin serverin uudestaan komennolla, jossa otin huomioon portin ja halusin pitääö konsolin auki.
+Katsotaan seuraavkasi mistä voisi löytyä konfiguraatiotiedosto `openttd.cfg`. Käytin komentoja `ls -a`, `find -name 'openttd'` ja lopulta luin openttd sivuilta, että asetustiedosto on kotihakemistossa `~/.config`. Sieltä ei kuitenkaan vielä löytynyt tiedostoa, vaikka kansio oli kyllä olemassa. Ajoin kotihakemistossa `sudo find -name 'openttd.cfg'` Eikö mitään löytynyt. No, käynnistin serverin uudestaan komennolla, jossa otin huomioon portin ja halusin pitää konsolin auki.  
 ```sh
-openttd -D localhost:3001:
+$vagrant@master openttd -D localhost:3001:
 ```
-Ja sain viestin:
+Ja sain viestin:  
+
 ![alt text](/images/image-3.png)
 
-Planetmaker osasi kertoa, että openttdtä ei kannattaisi ajaa roottina. Ehkä ohjelma pitäisi asentaa käyttäjälle? https://www.tt-forums.net/viewtopic.php?t=70615
+Openttdtä ei ilmeisesti kannattaisi ajaa roottina. Ehkä ohjelma pitäisi asentaa käyttäjälle? ( Planetmaker https://www.tt-forums.net/viewtopic.php?t=70615)
 
-Purin ohjelman kotihakemistoon ja ajoin sieltä ja nyt valitti taas grafiikkasetistä. Jtoain kuitenkin tpaahtui ja yritin komennoilla `ps` ja `top` selvittää oliko ohjelma päällä, mielestäni ei (Ayodeji 2024).
+Purin ohjelman kotihakemistoon ja ajoin sieltä ja nyt valitti taas grafiikkasetistä. Jotain kuitenkin tapahtui ja yritin komennoilla `ps` ja `top` selvittää oliko ohjelma päällä, mielestäni ei (Ayodeji 2024).
+
 ![alt text](/images/image-4.png)
 ![alt text](/images/image-5.png)
 
@@ -101,42 +92,47 @@ Luin openttd --help komentoa vähän tarkemmin ja olin ainakin laittanut komento
 
 ![alt text](/images/image-6.png)
 
-`ps -x` Ei kuitenkaan näyttänyt vieläkään mitään. Menin kotihakemistoon ja `find -name '*log*'` löysin logitiedoston ja tsekkasin sitä. Noo sama grafiikkaongelma. MEnin lukemaan manuaaleja. Pitäisi varmaan onnistua käynnistämään se ilman graafista liittymää.
+`ps -x` Ei kuitenkaan näyttänyt vieläkään mitään. Menin kotihakemistoon ja `find -name '*log*'` löysin logitiedoston ja tsekkasin sitä. Noo sama grafiikkaongelma. Menin lukemaan openttd manuaaleja. ajattelin että ohjelma pitäisi onnistua käynnistämään ilman graafista liittymää.
 
-No siellähän luki että OpenTTD needs some additional graphics and sound files to run. Eikun asentamaan. Manuaalistä löyty pari ilmaista grafiikkakirjastoa. KAtoin Openttd asennusopasta.
+No siellähän luki että "OpenTTD needs some additional graphics and sound files to run." Tätä en muistanutkaan, mutta eikun asentamaan. Manuaalista löyty pari ilmaista grafiikkakirjastoa. Kastoin Openttd asennusopasta.
 
-LAtasin grafiikat suoraan moduuliin, koska tarvitsisin niitä myöhemmin openttd kanssa:
+Latasin grafiikat suoraan moduuliin, koska tarvitsisin niitä myöhemmin minionin kanssa:
+
 ```sh
-sudo curl -O https://cdn.openttd.org/opengfx-releases/7.1/opengfx-7.1-all.zip'
-sha256sum ./opengfx-7.1-all.zip 
-tar -xf opengfx-7.1-all.zip -C /tmp/openttdGfx
+$vagrant@master sudo curl -O https://cdn.openttd.org/opengfx-releases/7.1/opengfx-7.1-all.zip'
+$vagrant@master sha256sum ./opengfx-7.1-all.zip 
+$vagrant@master tar -xf opengfx-7.1-all.zip -C /tmp/openttdGfx
 # Virhe: tar: This does not look like a tar archive
-sudo apt install unzip
-sudo unzip -q opengfx-7.1-all.zip 
-sudo tar -xf opengfx-7.1.tar -C /tmp
+$vagrant@master sudo apt install unzip
+$vagrant@master sudo unzip -q opengfx-7.1-all.zip 
+$vagrant@master sudo tar -xf opengfx-7.1.tar -C /tmp
 ```
 
-Sitten menin lukemaan tuon grafiikkasetin manuaaleja. Olen vähn liian hätänen, taria ei tarvitsisi unpackata. `sudo rm -r -f  opengfx-7.1/`
+Sitten menin lukemaan tuon grafiikkasetin manuaaleja. Taria ei olisi tarvinnut purkaa. `sudo rm -r -f  opengfx-7.1/`  
 
 ![alt text](/images/image-7.png)
 
-No, laitoin tämän nyt sitten kansioon (koitan nyt ensiksi /opt/ -kansiota) ja sain seuraavan errorin:
+No, laitoin tämän nyt sitten kansioon (koitan nyt ensiksi /opt/ -kansiota) ja sain seuraavan errorin:  
+
 ![alt text](/images/image-8.png)
 
-Ja kielikansiossa on kyl kamaa...
+Ja kielikansiossa on kyl kamaa...  
+
 ![alt text](/images/image-9.png)
 
-Ongelma oli komennon laittamisessa temrinaalikomennossa. Kun käynniskin komennon suoraan kansiosta ./openttd homma lähti toimimaan. Himmeä mäihä että tajuisin tuon.
+Ongelma oli siinä, että käytin komentoa ympäristömuuttujan kautta. Kun käynniskin komennon suoraan kansiosta `./openttd` homma lähti toimimaan. Himmeä mäihä että tajuisin tuon.
 
 ![alt text](/images/image-12.png)
 ![alt text](/images/image-13.png)
 
-Ennenkuin muutan muita asetuksia, niin yritän saada tämän toimimaan minionilla. Porttikonfiguroinnin teen vasta kun tämä kaikki toimii. Edelleen pitäisi löytää se confitiedosto. Ehkä Hypoteresini on että nytkun peli on startattu, myös se löytyy. Testiksi siis muutin muutamaa asetusta. `sudo find -name 'openttd.cfg'` paikallisti tiedoston kotihakemistoon. Asetustiedostot olivat syntyneet. Kopioin koko tiedoston saltin moduuliin `sudo cp openttd.cfg /srv/salt/openttd/`
+Hypoteesini oli, että kun peli  startattu, myös asetustiedosto löytyisi ja tämä piti paikkansa. `sudo find -name 'openttd.cfg'` Kopioin koko asetustiedoston tiedoston saltin moduuliin `sudo cp openttd.cfg /srv/salt/openttd/`
 
 ![alt text](/images/image-15.png)
 
+Ennen kuin muutan muita asetuksia, niin yritän saada tämän toimimaan minionilla. Porttikonfiguroinnin teen vasta kun tämä kaikki toimii. 
+
 ```sh
-sudoedit init.sls
+$vagrant@master sudoedit init.sls
 ```
 ```yaml
 unzip:
@@ -164,40 +160,46 @@ unzip -q /tmp/opengfx-7.1-all.zip -d /opt/openttd-14.1-linux-generic-amd64/bases
 
 Hyväksyin minionin avaimet
 ```sh
-sudo salt-key -A
-sudo salt '*' state.apply openttd
+$vagrant@master sudo salt-key -A
+$vagrant@master sudo salt '*' state.apply openttd
 
 ```
 Yhteys ei toiminut ja sama juttu `sudo salt '*' ping`
 ![alt text](image.png)
 
 
-Eiköhän aloiteta alusta. tuhosin virtuaalikoneet ja pistin ne uusiksi päälle. hyväksyin avaimet, testasin pingin. 11:00 ruokatauko.
+Eiköhän aloiteta alusta. Tuhosin virtuaalikoneet ja pistin ne uusiksi päälle. Hyväksyin avaimet, testasin pingin. 11:00 ruokatauko.
 
 ![alt text](image-1.png)
 
 11.15 jatkuu
 
 ```sh
-  8 sudo salt-key -A -y
-    9  salt '*' test.ping 
-   11  sudo mkdir -p /srv/salt/openttd
-   12  cd /srv/salt/openttd/
-   13  sudo curl -O https://cdn.openttd.org/opengfx-releases/7.1/opengfx-7.1-all.zip
-   14  sudo curl -O https://cdn.openttd.org/openttd-releases/14.1/openttd-14.1-linux-generic-amd64.tar.xz
-   15  sudoedit init.sls
-   16  sudoedit openttd.cfg
-   17  sudo salt '*' state.apply openttd
-   18  history
+$vagrant@master sudo salt-key -A -y
+$vagrant@master sudo salt '*' test.ping 
+$vagrant@master sudo mkdir -p /srv/salt/openttd
+$vagrant@master cd /srv/salt/openttd/
+$vagrant@master sudo curl -O https://cdn.openttd.org/opengfx-releases/7.1/opengfx-7.1-all.zip
+$vagrant@master sha256sum ./opengfx-7.1-all.zip 
+$vagrant@master sudo curl -O https://cdn.openttd.org/openttd-releases/14.1/openttd-14.1-linux-generic-amd64.tar.xz
+$vagrant@master sha256sum ./openttd-14.1-linux-generic-amd64.tar.xz
+$vagrant@master sudoedit init.sls
+$vagrant@master sudoedit openttd.cfg
+$vagrant@master sudo salt '*' state.apply openttd
 ```
+graiikkojen checksum:
+928fcf34efd0719a3560cbab6821d71ce686b6315e8825360fba87a7a94d7846
+peli:
+c7648c9aac11daeb7f1bdd7a07346865ae590c07af4a6d02a5ed01fb33eba067
 
-Sain jonkin tosi mysteerisen salt -virheen. ALoitan poistamalla rivit init.sls:stä ja suorittamalla ne yksi kerrallaan. Samalla tulee tsekattua idempotenssi.
 
-Aloin ajamaan ohjelmaa yksi rivi kerrallaan ja kaikki meni loistavasti ja idempotentisti, epäilinkin asiaa ja menin jossain välissä tarkistamaan minionilta että tapahtuuko siellä mitään:
+Sain jonkin tosi mysteerisen salt -virheen. Aaoitan poistamalla rivit init.sls:stä ja suorittamalla ne yksi kerrallaan. Samalla tulee tsekattua idempotenssi.
+
+Aloin ajamaan ohjelmaa yksi rivi kerrallaan ja kaikki meni loistavasti ja idempotentisti. Menin jossain välissä tarkistamaan minionilta että tapahtuuko siellä mitään:
 
 ![alt text](image-2.png)
 
-Korjasin ennen konfiguraatiokohdan ajamista vielä sitä niin että kansiotkin tulee luotua, mustelen että näin piti tehdä:
+Korjasin ennen konfiguraatiokohdan ajamista vielä:
 
 ```sh
 /home/vagrant/.config/openttd/openttd.cfg:
@@ -207,16 +209,16 @@ Korjasin ennen konfiguraatiokohdan ajamista vielä sitä niin että kansiotkin t
 ```
 ![alt text](image-3.png)  
 
-Lopulta koko init.sls oli kasassa ja toimi: Vielä ennen lopullisen idempotenssin testaamista, pitäisi viimeiseen run -komentoon keksiä jotain. Olisi myös siistimpää käyttää service.running tilafunktiota, mutta en tiedä miten saisin selville openttd demonin nimen. Luin vähän systemctl manuaaleja ja Saltin manuaaleja liittyen service.running -funktioon (). En kuitenkaan keksinyt miten tätä lähtisi lähestymään. Kysyin ChatGPT:ltä suuntaa.
+Lopulta koko init.sls oli kasassa ja toimi: Vielä ennen lopullisen idempotenssin testaamista, pitäisi viimeiseen run -komentoon keksiä jotain. Olisi myös siistimpää käyttää service.running tilafunktiota, mutta en tiedä miten saisin selville openttd demonin nimen. Luin vähän systemctl manuaaleja ja Saltin manuaaleja liittyen service.running -funktioon. En kuitenkaan keksinyt miten asiaa lähtisi lähestymään. Kysyin ChatGPT:ltä suuntaa.
 
 ![alt text](image-4.png)
 
 ChatGPT ohjasi minut komennon pgrep openttd äärelle. Sitä kautta pystyn löytämään prosessin pid -numeron komennolla `pgrep openttd`. Lisäsin tämän tarkistamisen cmd.run -komentoon. ChatGPT:ltä opin myös että ilmeisimmin tällaisista prosesseista voi luoda myös demonit, joita voisi ajaa service.running -funktiolla. En kuitenkaan ymmärtänyt asiaa kovin syvällisesti, niin päätin käyttää cdm.run -komentoa. (Luin asioista lisää Linuxize 2024, Salt Project 2024).
 
-Tällä komennolla saavutin idempotenssin: 
+Em. komennolla saavutin idempotenssin: 
 ![alt text](image-5.png)
 
-Viimeisenä vielä pitäisi tarkistaa että tuohon saa yhteyden. Openttd -sivusto kertoi että seruaavat portit kannattaa avata:
+Viimeisenä vielä pitäisi tarkistaa että peliserveriin saa yhteyden. Openttd -sivusto kertoi että seruaavat portit kannattaa avata:
 
 3979 UDP
 3979 TCP
@@ -260,33 +262,46 @@ Peli ei kuitenkaan näy:
 
 ![alt text](image-7.png)  
 
-Musitelin että konffeihin piti vielä laittaa joitain spesifejä juttuja ja näin olikin. Muokkasin pari asetusta. Muokkasin nämä ja välissä tuhosin openttd serverin `sudo kill 4380`
+Muistelin että konffeihin piti vielä laittaa joitain spesifejä juttuja ja näin olikin. Muokkasin pari asetusta. Muokkasin nämä ja välissä tuhosin openttd serverin `sudo kill 4380`
 
+Testailin aina yhteyttä näillä komennoilla:
 ```sh
-sudo ufw status verbose
-sudo nmap -sU -p 3979 192.168.56.89
-telnet 192.168.56.89 3979
+$vagrant@minion sudo ufw status verbose
+$host sudo nmap -sU -p 3979 192.168.56.89
+$host telnet 192.168.56.89 3979
 ```
-
 
 ![alt text](image-9.png)
 
-Nonniin en saanut 
 ![alt text](image-10.png)
+
+Minulla oli sitten suria ongelmia saada tätä toimimaan ja tein paljon kaikenlaista, mitä en raportoinut. Kokeilin käytännössä eri opentTTD -konfiguraatioita. Huomasin lopulta ettei konfiguraatiotiedosto edes lataudu peliin, sillä logit valittivat ettei server_name ollut määritelty.
 
 ![alt text](image-11.png)
 
-![alt text](image-12.png)
+Etsimällä löysin kolme eri cfg -tiedostoa koneelta. Seuraavaksi muokkasin näitä, mutta muokkaukseni ylikirjoittautuivat.
 
-![alt text](image-13.png)
-
-![alt text](image-14.png)
-
-Edelleenkän server_name ei ole set, joten en tiedä mistä se nämäö konffit ottaa
+Kokeilin käynnistää openttd -sovelluksen eri parametreilla. Lisäsin nämä komentoon:
 
   -x                  = Never save configuration changes to disk
   -c config_file      = Use 'config_file' instead of 'openttd.cfg'
 
+config -tiedostona käytin openttd -kansioon luomaani ja master-koneelta tuomaami konfiguraatiotiedostoa.
+
+Lopulta huomasin että sen lisäksi ette ikonfiguraatiotiedosto aukea, serveri kuuntelee vain osoitetta 127.0.0.1. eli localhost.
+
+Lopulta hostaaminen onnistui kun muutin parametrin -D argumenttia localhost --> 192.168.56.89
+
+![alt text](image-15.png)
+
+![alt text](image-16.png)
+
+Tähän lopetin työskentelyn. Projektiin jäi vielä keskeneräistä puuhailtavaa ja tässä muutama ongelma:
+- konfiguraatiotiedostoa ei käytetä ohjelman käynnistyessä.
+- kun konfiguraatiotiedosto muuttuu demoni ei käynnisty uudestaan.
+- serverillä ei ole modeja käytössä
+
+Kello 14.26 lopetin tehtävän, ei ole enempää aikaa selvittää em. asioita.
 
 
 ## Lähteet
