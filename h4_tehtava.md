@@ -13,7 +13,7 @@ Jätin tämän tehtävän viimeiseksi. Piti tehdä jotain ääniin liittyvää, 
 
 Tässä taikurin hihat:
 
-![alt text](image.png) 
+![alt text](/images/h4/image.png) 
 
 Lähdin ottamaan selvää miten tämä asennus voisi onnistua. Openttd Linux paketti löytyi verkosta, mutta en tiedä miten siihen käytetään tätä avainsysteemiä. Ylipäätään vähän mysteeri, miten avainten hallinta toimii kun käyttää `pkg.installed: curl` esimerkiksi. Päättelisin että tässä tilanteessa pitäisi eka antaa aptille tietoja ja pääädyin kokeilemaan pkgrepo.managed -tilafunktiota. Apua saltin dokumenteista (Salt Project 2024b, 2024c).
 
@@ -21,7 +21,7 @@ Lähdin ottamaan selvää miten tämä asennus voisi onnistua. Openttd Linux pak
     vagrant@master:~$ sudoedit /srv/salt/openttd/init.sls
     vagrant@master:~$ sudo salt '*' state.apply openttd
 
-![alt text](image-1.png)
+![alt text](/images/h4/image-1.png)
 
 En ymmärtänyt tuota environment variablea base, ja mietin että pitääpä kysyä tunnilla. Korjauksen jälkeen tiedosto init.sls oli tällainen:
 
@@ -31,18 +31,18 @@ En ymmärtänyt tuota environment variablea base, ja mietin että pitääpä kys
       - gpgcheck: 1
       - key_text: c7648c9aac11daeb7f1bdd7a07346865ae590c07af4a6d02a5ed>
 
-![alt text](image-2.png)
+![alt text](/images/h4/image-2.png)
 
 Lisäsin pkgmanagelle name -attribuutin:
 
     openttd:
       pkgrepo.managed
 
-![alt text](image-3.png)
+![alt text](/images/h4/image-3.png)
 
 Kokeilin laittaa ID:ksi asennusosoitteen:
 
-![alt text](image-4.png)
+![alt text](/images/h4/image-4.png)
 
 No, olin nyt aivan hukassa. En tiennyt mitä tilafuntkiota edes seuraavaksi lähtisi katsomaan. Tämä pakettien asentamienn ja avainten tsekkaaminen on jotenkin tuntunut aika monimutkaiselta asialta oppia. Siihen on aina joku oma jipponsa. Katsoin ChatGPT:ltä apua ja se ohjasi näin:
 
@@ -56,7 +56,7 @@ Nyt kun pandoran lipas oli avattu, ja aikaa rajallisesti (tunti enää ja tänä
 
     vagrant@minion1:~$ tar -xJf /tmp/openttd-14.1-linux-generic-amd64.tar.xz -C /opt  
 
-![alt text](image-5.png)
+![alt text](/images/h4/image-5.png)
 
 Vaikka toiminto toimi minionilla, ei chatGPT:n ohje toiminut minulla tilafunktiossa. ChatGPT oli laittanut cmd.runin openttd -idn alle, joten muutin sitä. Alla ChatGPT:n ehdotuksen jälkeen myös oma versioni, joka toimi
 
@@ -84,7 +84,7 @@ Vaikka toiminto toimi minionilla, ei chatGPT:n ohje toiminut minulla tilafunktio
 
 Menin seuraavaksi tutkimaan minionilla mitä sieltä oli avautunut. Tällöin voisin lähteä käynnistämään daemonia.
 
-![alt text](image-6.png)
+![alt text](/images/h4/image-6.png)
 
 latasin libgomp.so.1:sen mikä onneksi löytyi pakettikirjastosta suoraan. Koska lataus näin onnistui, lisäsin sen myös suoraan moduuliin ja testasin. 
 
@@ -93,9 +93,9 @@ latasin libgomp.so.1:sen mikä onneksi löytyi pakettikirjastosta suoraan. Koska
         libgomp1:
           pkg.installed
 
-![alt text](image-7.png)
+![alt text](/images/h4/image-7.png)
 
-![alt text](image-8.png)
+![alt text](/images/h4/image-8.png)
 
 Yhteenvedosta myös huomasi että cmd -komento ei ole vielä idempotentti, joten muutin sitä osaa tilafunktiosta (apuna saltin dokumentit):
 
@@ -113,7 +113,7 @@ Kokeilin vielä viimeistä ChatGPT:n antamaa ohjetta liittyen symlinkkiin. En al
       - target: /opt/openttd-14.1-linux-generic-amd64/openttd
       - force: True
 
-![alt text](image-9.png)  
+![alt text](/images/h4/image-9.png)  
 
 Nyt kun tuo ohjelma toimi, oli aika tutkia miten openttd dedicated serveri käynnistettiin linuxilla. Apua wikistä (Openttd 2024). Harmi että olin kadottanut vanhan confitiedostoni, jota olin käyttänyt windowsilla. Tein seuraavat komennot ja yritin samalla ottaa selvää mikä käynnistyvän demonin nimi on.
 
@@ -133,7 +133,7 @@ Openttd --help neuvoi käynnistämään palvelun parametrillä `-D [host][:port]
 
 10.39 Alla lopputilanne:
 
-![alt text](image-10.png)
+![alt text](/images/h4/image-10.png)
 
 
 ## Lähteet
