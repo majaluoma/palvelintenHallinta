@@ -42,9 +42,10 @@ tar -xJf /tmp/openttd-14.1-linux-generic-amd64.tar.xz -C /home/vagrant:
 unzip -q /tmp/opengfx-7.1-all.zip -d /home/vagrant/openttd-14.1-linux-generic-amd64/baseset:
   cmd.run:
     - creates: /home/vagrant/openttd-14.1-linux-generic-amd64/baseset/opengfx-7.1.tar
-/home/vagrant/openttd-14.1-linux-generic-amd64/openttd.cfg:
+/home/vagrant/.config/openttd/openttd.cfg:
   file.managed:
     - source: salt://openttd/openttd.cfg
-/home/vagrant/openttd-14.1-linux-generic-amd64/openttd -c ./openttd.cfg -x -f -D 192.168.56.89:3979:
+    - makedirs: True
+/home/vagrant/openttd-14.1-linux-generic-amd64/openttd -c /home/vagrant/.config/openttd/openttd.cfg -x -f -D 192.168.56.89:3979:
   cmd.run:
     - unless: pgrep openttd
